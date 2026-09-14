@@ -1,13 +1,9 @@
-const { Given, When, Then } = require('@cucumber/cucumber');
+const { When, Then } = require('@cucumber/cucumber');
 
-Given('user is on the login page', async function () {
-  await this.loginPage.navigate();
+When('user checks dashboard elements', async function () {
+  await this.dashboardPage.verifyOnDashboard();
 });
 
-When('user logs in with credentials {string} and {string}', async function (username, password) {
-  await this.loginPage.login(username, password);
-});
-
-Then('dashboard navigation menu should be visible', async function () {
-  await this.page.waitForTimeout(1000);
+Then('dashboard widgets should be visible', async function () {
+  await this.dashboardPage.verifyOnDashboard();
 });

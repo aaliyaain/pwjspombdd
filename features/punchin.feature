@@ -1,15 +1,8 @@
-Feature: Workforce Punch
+Feature: Punch In and Out functionality
 
-  Background:
+  Scenario: Perform Check In and Check Out with 1 minute delay
     Given user is logged in
-    And user is on the workforce punch screen
-
-  Scenario: User successfully punches in with selfie capture
-    When user clicks green punch button
-    And user captures selfie and punches in
-    Then punch in status should be updated to checked in
-
-  Scenario: User successfully punches out with selfie capture
-    When user clicks red punch button
-    And user captures selfie and punches out
-    Then punch out status should be updated to checked out
+    When User clicks on the Check In button
+    And User waits for 1 minute
+    And User clicks on the Check Out button
+    Then punch operation should complete successfully

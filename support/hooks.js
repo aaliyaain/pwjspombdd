@@ -1,24 +1,32 @@
-require('dotenv').config();
-const { Before, After, Status, setDefaultTimeout } = require('@cucumber/cucumber');
+const { Before, After, BeforeAll, AfterAll, setDefaultTimeout } = require('@cucumber/cucumber');
+const { chromium } = require('@playwright/test');
+const LoginPage = require('../pages/loginPage');
 
-// Global step execution budget set to 60 seconds
 setDefaultTimeout(60000);
 
-Before(async function () {
-  await this.init();
+let browser;
+
+BeforeAll(async function () {
+    browser = await chromium.launch({ 
+        headless: false,
+        args: ['--start-maximized', '--use-fake-ui-for-media-stream'] 
+    });
 });
 
-After(async function (scenario) {
-  if (scenario.result?.status === Status.FAILED && this.page) {
-    const screenshot = await this.page.screenshot({ 
-      path: `screenshots/failed-${Date.now()}.png`, 
-      fullPage: true 
-    }).catch(() => null);
-    
-    if (screenshot) {
-      this.attach(screenshot, 'image/png');
-    }
-  }
+Before(async function () {
+    this.context = await browser.newContext({ 
+        viewport: null,
+        permissions: ['camera', 'geolocation']
+    });
+    this.page = await this.context.newPage();
+    this.loginPage = new LoginPage(this.page);
+});
 
-  await this.cleanup();
+After(async function () {
+    if (this.page) await this.page.close();
+    if (this.context) await this.context.close();
+});
+
+AfterAll(async function () {
+    if (browser) await browser.close();
 });
